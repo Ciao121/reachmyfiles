@@ -71,11 +71,11 @@ In this way, reachmyfiles combines the privacy of end-to-end encryption with the
 - **AES-256-GCM** for encrypting file lists and file data.
 - The server acts only as a relay and never has access to your decrypted files or keys.
 
-For more details, see [SECURITY.md](SECURITY.md) _(or add further documentation here)_.
+For more details, see [SECURITY.md](SECURITY.md).
 
 ## License
 
-MIT License (or specify your preferred license)
+MIT License
 
 ---
 
