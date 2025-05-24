@@ -56,6 +56,9 @@ In this way, reachmyfiles combines the privacy of end-to-end encryption with the
    ```
    *(You may need to install Electron globally: `npm install -g electron`)*
 
+## Download Installable / Installer
+- [Windows] I will make a Windows installer available at https://reachmyfiles.com.
+
 ## Usage
 
 - **Add a folder:** Click "Add Folder" in the desktop app and select a local folder to share.
