@@ -3,6 +3,8 @@
 **reachmyfiles** is a cross-platform, end-to-end encrypted desktop client that allows you to securely share folders from your computer and make them available for download via a web browser.  
 No file or file list ever leaves your computer unencrypted — not even the server can decrypt your data.
 
+Project website: https://reachmyfiles.com
+
 ## Features
 
 - 🔒 End-to-end encryption (E2EE) for all communications and file transfers
