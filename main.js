@@ -5,11 +5,11 @@ const fs = require('fs');
 const WebSocket = require('ws');
 const crypto = require('crypto');
 const EC = require('elliptic').ec;
+const { autoUpdater } = require('electron-updater');
 
 app.setName('reachmyfiles');
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 let wsHeartbeatInterval = null;
-
 let pendingRegistrations = [];
 let activeStreams = {};
 let handshake = {};
@@ -20,8 +20,8 @@ let sharedFolders = [];
 let ws = null;
 
 const STORE_PATH = path.join(app.getPath('userData'), 'shared_folders.json');
-let activeUsers = {}; // { uuid: count }
-let downloadIdToUuid = {}; // Map downloadId → uuid
+let activeUsers = {};
+let downloadIdToUuid = {};
 
 function log(...args) {
 	const now = new Date().toISOString().replace('T', ' ').replace('Z','');
@@ -63,7 +63,7 @@ function getFolder(uuid) {
 }
 
 const ec = new EC('p256');
-let keyPairs = {}; // uuid → ecKeyPair
+let keyPairs = {};
 
 async function doECDHHandshakeFor(uuid, browserPubKeyArr, sendPubKeyCb) {
 	let ecKey = keyPairs[uuid];
@@ -138,9 +138,9 @@ function sendEncrypted(uuid, obj) {
 const downloadChunkAckEvery = 8;
 let chunkBufferCount = {};
 const MAX_CHUNKS_IN_FLIGHT = 32;
-let backpressureWaiters = {}; // downloadId -> array di resolve
-let downloadReady = {}; // downloadId => true
-let pendingDownloadRequests = {}; // downloadId => { folder, targetDir, filePath, payload }
+let backpressureWaiters = {};
+let downloadReady = {};
+let pendingDownloadRequests = {};
 
 function connectToServer() {
 	ws = new WebSocket('wss://www.reachmyfiles.com:443/ws/');
@@ -421,6 +421,10 @@ ipcMain.handle('toggle-share', async (event, uuid, enabled) => {
 	}
 });
 
+ipcMain.on('check-for-updates', () => {
+	autoUpdater.checkForUpdates();
+});
+
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		width: 600,
@@ -464,6 +468,7 @@ function createWindow() {
 		setTimeout(() => {
 			splash.close();
 			mainWindow.show();
+			mainWindow.webContents.send('show-update-check-dialog');
 		}, 1200);
 	});
 
@@ -555,4 +560,22 @@ app.whenReady().then(() => {
 	loadShares();
 	createWindow();
 	connectToServer();
+
+	autoUpdater.checkForUpdates();
+
+	autoUpdater.on('update-available', () => {
+		if (mainWindow) mainWindow.webContents.send('update-available');
+	});
+
+	autoUpdater.on('update-downloaded', () => {
+		if (mainWindow) mainWindow.webContents.send('update-downloaded');
+	});
+
+	autoUpdater.on('error', (err) => {
+		if (mainWindow) mainWindow.webContents.send('update-error', err == null ? "unknown" : err.message);
+	});
+});
+
+ipcMain.on('check-for-updates', () => {
+	autoUpdater.checkForUpdates();
 });

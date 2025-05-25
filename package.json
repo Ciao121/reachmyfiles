@@ -1,20 +1,60 @@
 {
-  "name": "reachmyfiles",
-  "productName": "reachmyfiles",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "electron": "^36.2.1",
-    "elliptic": "^6.6.1",
-    "uuid": "^11.1.0",
-    "ws": "^8.18.2"
-  }
+	"name": "reachmyfiles",
+	"productName": "reachmyfiles",
+	"version": "1.0.0",
+	"description": "Ultra-secure folder sharing with E2EE. No accounts, no cloud storage, just your PC.",
+	"main": "main.js",
+	"author": "Ivan Maria Spadacenta",
+	"license": "ISC",
+	"scripts": {
+		"start": "electron .",
+		"dist": "electron-builder"
+	},
+	"keywords": [
+		"electron",
+		"file-sharing",
+		"e2ee",
+		"secure",
+		"desktop"
+	],
+	"dependencies": {
+		"elliptic": "^6.6.1",
+		"uuid": "^11.1.0",
+		"ws": "^8.18.2"
+	},
+	"devDependencies": {
+		"electron": "^36.2.1",
+		"electron-builder": "^26.0.12",
+		"electron-updater": "^6.6.2"
+	},
+	"build": {
+		"appId": "com.reachmyfiles.app",
+		"productName": "reachmyfiles",
+		"directories": {
+			"buildResources": "build"
+		},
+		"files": [
+			"**/*",
+			"!**/node_modules/*/{test,__tests__,examples}/**"
+		],
+		"win": {
+			"target": "nsis",
+			"icon": "build/icon.ico"
+		},
+		"nsis": {
+			"oneClick": false,
+			"perMachine": false,
+			"allowToChangeInstallationDirectory": true,
+			"createDesktopShortcut": true,
+			"createStartMenuShortcut": true,
+			"shortcutName": "reachmyfiles"
+		},
+		"publish": [
+			{
+				"provider": "github",
+				"owner": "Ciao121",
+				"repo": "reachmyfiles"
+			}
+		]
+	}
 }

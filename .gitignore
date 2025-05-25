@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Output di Electron Builder
+dist/
+win-unpacked/
+*.exe
+*.blockmap
+*.yml
+
+# File temporanei di builder/debug
+builder-debug.yml
+builder-effective-config.yaml
+latest.yml
+
+# Cartella personale che non vuoi caricare
+project_notes/

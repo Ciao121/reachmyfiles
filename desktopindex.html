@@ -346,6 +346,81 @@
 		});
 
 		window.electronAPI.onSharesUpdated(renderShares);
+
+		window.electronAPI.onUpdateAvailable(() => {
+			showUpdateModal();
+		});
+		window.electronAPI.onUpdateDownloaded(() => {
+			showRestartModal();
+		});
+		window.electronAPI.onUpdateError((err) => {
+			alert("Error checking for updates: " + err);
+		});
+
+		function showUpdateModal() {
+			const html = `
+				<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="updateModalLabel">Update Available</h5>
+							</div>
+							<div class="modal-body">
+								A new version of reachmyfiles is available. Do you want to download and install it now?
+							</div>
+							<div class="modal-footer">
+								<button type="button" id="updateYesBtn" class="btn btn-primary">Yes</button>
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+			const temp = document.createElement('div');
+			temp.innerHTML = html;
+			document.body.appendChild(temp);
+
+			const modal = new bootstrap.Modal(document.getElementById('updateModal'));
+			modal.show();
+
+			document.getElementById('updateYesBtn').onclick = () => {
+				window.electronAPI.checkForUpdates();
+				modal.hide();
+			};
+		}
+
+		function showRestartModal() {
+			const html = `
+				<div class="modal fade" id="restartModal" tabindex="-1" aria-labelledby="restartModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="restartModalLabel">Update Ready</h5>
+							</div>
+							<div class="modal-body">
+								The update has been downloaded. Restart now to install?
+							</div>
+							<div class="modal-footer">
+								<button type="button" id="restartNowBtn" class="btn btn-primary">Restart</button>
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Later</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+			const temp = document.createElement('div');
+			temp.innerHTML = html;
+			document.body.appendChild(temp);
+
+			const modal = new bootstrap.Modal(document.getElementById('restartModal'));
+			modal.show();
+
+			document.getElementById('restartNowBtn').onclick = () => {
+				// This will cause the main process to quit and install the update
+				window.close();
+			};
+		}
+
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
