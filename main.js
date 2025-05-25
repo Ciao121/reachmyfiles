@@ -143,7 +143,7 @@ let downloadReady = {}; // downloadId => true
 let pendingDownloadRequests = {}; // downloadId => { folder, targetDir, filePath, payload }
 
 function connectToServer() {
-	ws = new WebSocket('wss://www.reachmyfiles.com:6333');
+	ws = new WebSocket('wss://www.reachmyfiles.com:443/ws/');
 	log('[CLIENT] Creating WebSocket...');
 
 	ws.on('open', () => {
