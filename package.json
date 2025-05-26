@@ -1,7 +1,7 @@
 {
 	"name": "reachmyfiles",
 	"productName": "reachmyfiles",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Ultra-secure folder sharing with E2EE. No accounts, no cloud storage, just your PC.",
 	"main": "main.js",
 	"author": "Ivan Maria Spadacenta",
@@ -20,12 +20,12 @@
 	"dependencies": {
 		"elliptic": "^6.6.1",
 		"uuid": "^11.1.0",
-		"ws": "^8.18.2"
+		"ws": "^8.18.2",
+		"electron-updater": "^6.6.2"
 	},
 	"devDependencies": {
 		"electron": "^36.2.1",
-		"electron-builder": "^26.0.12",
-		"electron-updater": "^6.6.2"
+		"electron-builder": "^26.0.12"
 	},
 	"build": {
 		"appId": "com.reachmyfiles.app",
@@ -38,8 +38,9 @@
 			"!**/node_modules/*/{test,__tests__,examples}/**"
 		],
 		"win": {
-			"target": "nsis",
-			"icon": "build/icon.ico"
+		  "target": "nsis",
+		  "icon": "build/icon.ico",
+		  "artifactName": "reachmyfiles-Setup-${version}.${ext}"
 		},
 		"nsis": {
 			"oneClick": false,

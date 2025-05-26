@@ -7,6 +7,10 @@ const crypto = require('crypto');
 const EC = require('elliptic').ec;
 const { autoUpdater } = require('electron-updater');
 
+ipcMain.on('quit-and-install', () => {
+	autoUpdater.quitAndInstall();
+});
+
 app.setName('reachmyfiles');
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 let wsHeartbeatInterval = null;
@@ -435,6 +439,7 @@ function createWindow() {
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js'),
 			contextIsolation: true,
+			nodeIntegration: true,
 		},
 		resizable: true,
 		show: false,
@@ -448,6 +453,7 @@ function createWindow() {
 		if ((input.control || input.meta) && input.key.toLowerCase() === 'i') event.preventDefault();
 		if ((input.control || input.meta) && input.key.toLowerCase() === 'shift' && input.key.toLowerCase() === 'i') event.preventDefault();
 	});
+	
 	mainWindow.webContents.on('devtools-opened', () => {
 		mainWindow.webContents.closeDevTools();
 	});
@@ -463,12 +469,10 @@ function createWindow() {
 	});
 	splash.loadFile(path.join(__dirname, 'images', 'splash.html'));
 	mainWindow.loadFile('desktopindex.html');
-
 	mainWindow.once('ready-to-show', () => {
 		setTimeout(() => {
 			splash.close();
 			mainWindow.show();
-			mainWindow.webContents.send('show-update-check-dialog');
 		}, 1200);
 	});
 
@@ -561,18 +565,20 @@ app.whenReady().then(() => {
 	createWindow();
 	connectToServer();
 
+	// Automatic update check and background update: silent, transparent
 	autoUpdater.checkForUpdates();
 
 	autoUpdater.on('update-available', () => {
-		if (mainWindow) mainWindow.webContents.send('update-available');
+		// No user notification, update will be downloaded silently
 	});
 
 	autoUpdater.on('update-downloaded', () => {
-		if (mainWindow) mainWindow.webContents.send('update-downloaded');
+			// No action needed: the update will be installed automatically on next app restart.
 	});
 
 	autoUpdater.on('error', (err) => {
-		if (mainWindow) mainWindow.webContents.send('update-error', err == null ? "unknown" : err.message);
+		// Error is logged only for debug purposes
+		console.error('Update error:', err == null ? "unknown" : err.message);
 	});
 });
 
