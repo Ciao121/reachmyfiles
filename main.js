@@ -54,10 +54,22 @@ function cleanupStream(downloadId, origin='?') {
 function loadShares() {
 	try {
 		sharedFolders = JSON.parse(fs.readFileSync(STORE_PATH, 'utf-8'));
+
+		// Ensure all shares have the 'options' property for backward compatibility
+		for (let share of sharedFolders) {
+			if (!share.options) {
+				share.options = { password: null };
+			} else {
+				if (typeof share.options.password === "undefined") {
+					share.options.password = null;
+				}
+			}
+		}
 	} catch {
 		sharedFolders = [];
 	}
 }
+
 function saveShares() {
 	fs.writeFileSync(STORE_PATH, JSON.stringify(sharedFolders, null, 2));
 }
@@ -200,7 +212,18 @@ function connectToServer() {
 
 				if (payload.action === 'list') {
 					const folder = getFolder(data.uuid);
+
 					if (folder) {
+						if (folder.options && folder.options.password) {
+							if (
+								payload.password === undefined || 
+								payload.password !== folder.options.password
+							) {
+								console.log('[PASSWORD PROTECTION] Password required or incorrect for uuid:', data.uuid);
+								sendEncrypted(data.uuid, { action: 'require_password' });
+								return;
+							}
+						}
 						let targetDir = folder.path;
 						if (payload.path && payload.path !== '/' && payload.path !== '') {
 							targetDir = path.join(folder.path, payload.path);
@@ -225,6 +248,7 @@ function connectToServer() {
 						});
 					} else {
 						sendEncrypted(data.uuid, { action: 'error', message: 'Folder not found' });
+						return;
 					}
 				}
 				else if (payload.action === 'download' && payload.file && payload.downloadId) {
@@ -382,7 +406,16 @@ ipcMain.handle('select-folder', async () => {
 			existing.removed = false;
 		} else {
 			uuid = uuidv4();
-			sharedFolders.push({ uuid, path: folder, enabled: true, removed: false });
+			sharedFolders.push({ 
+				uuid, 
+				path: folder, 
+				enabled: true, 
+				removed: false, 
+				options: {
+					// Add here all future options related to this folder
+					password: null // By default, no password protection
+				}
+			});
 		}
 		saveShares();
 		registerShare(uuid);
@@ -391,6 +424,16 @@ ipcMain.handle('select-folder', async () => {
 	}
 	return null;
 });
+
+ipcMain.handle('update-share-options', async (event, uuid, options) => {
+	let share = sharedFolders.find(x => x.uuid === uuid);
+	if (share) {
+		share.options = { ...share.options, ...options };
+		saveShares();
+		mainWindow.webContents.send('shares-updated', sharedFolders);
+	}
+});
+
 
 ipcMain.handle('remove-share', async (event, uuid, permanent) => {
 	const idx = sharedFolders.findIndex(x => x.uuid === uuid);

@@ -1,7 +1,7 @@
 # Node modules
 node_modules/
 
-# Output di Electron Builder
+# Electron Builder outputs
 dist/
 win-unpacked/
 *.exe
@@ -13,5 +13,8 @@ builder-debug.yml
 builder-effective-config.yaml
 latest.yml
 
-# Cartella personale che non vuoi caricare
+# Server files
+server/
+
+# personal project notes
 project_notes/

@@ -32,4 +32,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
 	onUpdateError: (callback) => ipcRenderer.on('update-error', (event, err) => callback(err)),
 	getAppVersion: () => getAppVersion(),
 	quitAndInstall: () => ipcRenderer.send('quit-and-install'),
+	updateShareOptions: (uuid, options) => ipcRenderer.invoke('update-share-options', uuid, options),
 });
