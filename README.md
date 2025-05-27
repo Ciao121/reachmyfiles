@@ -13,6 +13,7 @@ Project website: https://reachmyfiles.com
 - ⚡ Modern and user-friendly interface
 - 👥 Monitor active downloads and users
 - 🛡️ No data is ever stored on the server, only relayed in encrypted form
+- 🔑 **Password protection for shared folders**: optionally require a password to access the contents of a shared folder, adding an extra layer of privacy and control
 
 ## How it works
 
