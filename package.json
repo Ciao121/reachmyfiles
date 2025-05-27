@@ -1,7 +1,7 @@
 {
 	"name": "reachmyfiles",
 	"productName": "reachmyfiles",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Ultra-secure folder sharing with E2EE. No accounts, no cloud storage, just your PC.",
 	"main": "main.js",
 	"author": "Ivan Maria Spadacenta",
